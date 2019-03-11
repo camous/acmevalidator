@@ -39,20 +39,17 @@ namespace acmevalidator
         {
             errors = new Dictionary<JToken, JToken>();
 
-            foreach (var token in input.Children().OfType<JProperty>())
+            // today we get as input ACME format which is only 2 level deep, let's not over engineer for now
+            foreach (var token in input.DescendantsAndSelf().OfType<JProperty>())
             {
-                // today we get as input ACME format which is only 2 level deep, let's not over engineer for now
-                foreach (var subtoken in token.DescendantsAndSelf().OfType<JProperty>())
+                // prevents comparison of full first level Object (see tests nestedproperties)
+                if (token.Value.Type != JTokenType.Object)
                 {
-                    // prevents comparison of full first level Object (see tests nestedproperties)
-                    if (subtoken.Value.Type != JTokenType.Object)
+                    var tokenrule = rules.SelectToken(token.Path);
+                    if (tokenrule != null)
                     {
-                        var subtokenrule = rules.SelectToken(subtoken.Path);
-                        if (subtokenrule != null)
-                        {
-                            if (!ValidateToken(subtokenrule, subtoken))
-                                errors.Add(subtoken, subtokenrule.Parent);
-                        }
+                        if (!ValidateToken(tokenrule, token))
+                            errors.Add(token, tokenrule.Parent);
                     }
                 }
             }
