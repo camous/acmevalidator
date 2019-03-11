@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Authors>Fabien Camous</Authors>
+    <Description>Validate json object against json rules</Description>
+    <Company>Bearingpoint</Company>
   </PropertyGroup>
 
   <ItemGroup>
