@@ -201,5 +201,30 @@ namespace acmevalidator.tests
 
             Assert.IsTrue(acmevalidator.Validate(input, rule));
         }
+
+        [TestMethod]
+        public void mixnestedproperties()
+        {
+            var acmevalidator = new global::acmevalidator.acmevalidator();
+            var input = new JObject
+            {
+                ["property"] = new JObject {
+                    { "country", "France" },
+                    { "countryiso", "FR" },
+                    { "region", "FBA" }
+                },
+                ["property2"] = 2
+            };
+
+            var rule = new JObject
+            {
+                ["property"] = new JObject {
+                    { "country", "France" },
+                    { "countryiso", "FR" } },
+                ["property2"] = 2
+            };
+
+            Assert.IsTrue(acmevalidator.Validate(input, rule));
+        }
     }
 }
