@@ -247,5 +247,15 @@ namespace acmevalidator.tests
             acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
             Assert.IsTrue(errors.Count != 0);
         }
+
+        [TestMethod]
+        public void testcasesensitive()
+        {
+            var acmevalidator = new global::acmevalidator.acmevalidator();
+            var input = new JObject { { "property", "france" } };
+            var rule = new JObject { { "property", "France" } };
+
+            Assert.IsFalse(acmevalidator.Validate(input, rule));
+        }
     }
 }
