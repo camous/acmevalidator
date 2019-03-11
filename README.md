@@ -1,3 +1,4 @@
+[![Nuget](https://img.shields.io/nuget/v/acmevalidator.svg)](https://www.nuget.org/packages/acmevalidator)
 # acmevalidator
 basic json filtering &amp; query library
 
