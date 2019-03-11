@@ -51,7 +51,7 @@ namespace acmevalidator
                         if (subtokenrule != null)
                         {
                             if (!ValidateToken(subtokenrule, subtoken))
-                                errors.Add(subtokenrule.Parent, subtoken);
+                                errors.Add(subtoken, subtokenrule.Parent);
                         }
                     }
                 }
