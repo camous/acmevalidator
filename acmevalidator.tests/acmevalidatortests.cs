@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace acmevalidator.tests
 {
@@ -225,6 +226,26 @@ namespace acmevalidator.tests
             };
 
             Assert.IsTrue(acmevalidator.Validate(input, rule));
+        }
+
+        [TestMethod]
+        public void errormessage()
+        {
+            var acmevalidator = new global::acmevalidator.acmevalidator();
+            var input = new JObject
+            {
+                ["property"] = new JObject {
+                    {"countryiso", "FR" } }
+            };
+
+            var rule = new JObject
+            {
+                ["property"] = new JObject {
+                    { "countryiso",new JArray("DE","AT") } }
+            };
+
+            acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
+            Assert.IsTrue(errors.Count != 0);
         }
     }
 }
