@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 
 namespace acmevalidator.tests
@@ -256,6 +257,14 @@ namespace acmevalidator.tests
             var rule = new JObject { { "property", "France" } };
 
             Assert.IsFalse(acmevalidator.Validate(input, rule));
+        }
+
+        [TestMethod]
+        public void noonerules()
+        {
+            var acmevalidator = new global::acmevalidator.acmevalidator();
+
+            Assert.ThrowsException<Exception>(() => acmevalidator.Validate(new JObject()));
         }
     }
 }

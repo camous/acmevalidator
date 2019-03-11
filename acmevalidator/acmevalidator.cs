@@ -37,6 +37,9 @@ namespace acmevalidator
 
         public bool Validate(JObject input, JObject rules, out Dictionary<JToken, JToken> errors)
         {
+            if (rules == null)
+                throw new Exception("No rules were defined");
+
             errors = new Dictionary<JToken, JToken>();
 
             // today we get as input ACME format which is only 2 level deep, let's not over engineer for now
