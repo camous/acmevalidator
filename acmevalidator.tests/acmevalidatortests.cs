@@ -19,6 +19,18 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
+        public void nullpropertyagainstobject()
+        {
+            var acmevalidator = new global::acmevalidator.acmevalidator();
+            var input = new JObject { { "property", new JObject { { "subproperty", "value" } } } };
+            var rule = new JObject { { "property", null } };
+
+            var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsTrue(errors.Count == 1);
+        }
+
+        [TestMethod]
         public void nestedproperty()
         {
             var acmevalidator = new global::acmevalidator.acmevalidator();

@@ -46,9 +46,9 @@ namespace acmevalidator
             foreach (var token in input.DescendantsAndSelf().OfType<JProperty>())
             {
                 // prevents comparison of full first level Object (see tests nestedproperties)
-                if (token.Value.Type != JTokenType.Object)
+                var tokenrule = rules.SelectToken(token.Path);
+                if (token.Value.Type != JTokenType.Object || tokenrule.Type == JTokenType.Null)
                 {
-                    var tokenrule = rules.SelectToken(token.Path);
                     if (tokenrule != null)
                     {
                         if (!ValidateToken(tokenrule, token))
