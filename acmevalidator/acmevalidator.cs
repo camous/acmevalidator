@@ -47,7 +47,7 @@ namespace acmevalidator
             {
                 // prevents comparison of full first level Object (see tests nestedproperties)
                 var tokenrule = rules.SelectToken(token.Path);
-                if (token.Value.Type != JTokenType.Object || tokenrule.Type == JTokenType.Null)
+                if (token.Value.Type != JTokenType.Object || (tokenrule != null && tokenrule.Type == JTokenType.Null))
                 {
                     if (tokenrule != null)
                     {
