@@ -6,7 +6,7 @@
     <Authors>Fabien Camous</Authors>
     <Description>Validate json object against json rules</Description>
     <Company>Bearingpoint</Company>
-    <Version>1.0.1</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
