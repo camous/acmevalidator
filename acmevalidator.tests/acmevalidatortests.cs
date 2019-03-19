@@ -248,6 +248,7 @@ namespace acmevalidator.tests
                 ["property2"] = 2
             };
 
+            var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
             Assert.IsTrue(acmevalidator.Validate(input, rule));
         }
 
@@ -287,6 +288,31 @@ namespace acmevalidator.tests
             var acmevalidator = new global::acmevalidator.acmevalidator();
 
             Assert.ThrowsException<Exception>(() => acmevalidator.Validate(new JObject()));
+        }
+
+        [TestMethod]
+        public void missingproperties()
+        {
+            var acmevalidator = new global::acmevalidator.acmevalidator();
+            var input = new JObject
+            {
+                ["property"] = new JObject {
+                    { "subpropertyA","value" } },
+                ["property2"] = "2"
+            };
+            var rule = new JObject
+            {
+                ["property"] = new JObject {
+                    { "subpropertyA", "value" },
+                    { "subpropertyB", "value" } },
+                ["property2"] = "2",
+                ["property3"] = "3"
+            };
+
+            var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
+
+            // property.subpropertyB & property3 are missing
+            Assert.IsTrue(equals == false && errors.Count == 2); 
         }
     }
 }

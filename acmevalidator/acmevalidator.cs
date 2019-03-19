@@ -40,22 +40,31 @@ namespace acmevalidator
             if (rules == null)
                 throw new Exception("No rules were defined");
 
+            var baserules = rules.DeepClone();
+
             errors = new Dictionary<JToken, JToken>();
 
             // today we get as input ACME format which is only 2 level deep, let's not over engineer for now
             foreach (var token in input.DescendantsAndSelf().OfType<JProperty>())
             {
                 // prevents comparison of full first level Object (see tests nestedproperties)
-                var tokenrule = rules.SelectToken(token.Path);
+                var tokenrule = baserules.SelectToken(token.Path);
                 if (token.Value.Type != JTokenType.Object || (tokenrule != null && tokenrule.Type == JTokenType.Null))
                 {
                     if (tokenrule != null)
                     {
                         if (!ValidateToken(tokenrule, token))
-                            errors.Add(token, tokenrule.Parent);
+                            errors.Add(tokenrule.Parent, token);
+
+                        // either matching or not, we remove the matched token
+                        tokenrule.Parent.Remove();
                     }
                 }
             }
+
+            foreach(var leftover in baserules.OfType<JProperty>())
+                if(leftover.Value.Count() != 0 || leftover.Value.Type != JTokenType.Object )
+                    errors.Add(leftover,null);
 
             return !errors.Any();
         }
