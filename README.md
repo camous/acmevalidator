@@ -24,7 +24,7 @@ rules
     new acmevalidator().Validate(input, rule); // return True
 ```
 
-`acmevalidator` supports several property rule and nested object (2 levels). All properties are forming `AND` operator.
+`acmevalidator` supports several properties rule and nested objects (2 levels). All properties are forming `AND` operator.
 
 input
 ```json
@@ -68,23 +68,40 @@ rules
 }
 ```
 
+```csharp
+    new acmevalidator().Validate(input, rule); // return True
+```
+
+`acmevalidator` needs all rules provided to match in order to return a successful comparison
+rules
+```json
+{
+    "propertynotininput" : "value"
+}
+``` 
+
+```csharp
+    new acmevalidator().Validate(input, rule, out Dictionary<JToken,JToken> delta); // return False
+    // delta : {"propertynotininput" : "value", null}
+```
+
 Not implemented yet
 
 * `not` operator support
 * `or` operator for several properties
 
-## Error description
+## Delta description
 
-`Validate` methods return `false` if input json doesn't validate rule one. An optional parameter `out Dictionary<JToken,JToken> errors` return all errors. 
+`Validate` methods return `false` if input json doesn't validate rule one. An optional parameter `out Dictionary<JToken,JToken> deltas` return all delta. 
 
 * Key = input token
 * Value = rule token
 
 ```csharp
-    new acmevalidator().Validate(input, rule, out Dictionary<JToken, JToken> errors); // return False
-    foreach (var error in errors)
+    new acmevalidator().Validate(input, rule, out Dictionary<JToken, JToken> deltas); // return False
+    foreach (var delta in deltas)
     {
-        error.Key // input { country = France }
-        error.Value // rule/expected { country = [Austria, Germany]}
+        delta.Key // rule/expected { country = [Austria, Germany]}
+        delta.Value // input { country = France }
     }
 ```
