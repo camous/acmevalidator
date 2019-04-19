@@ -5,15 +5,15 @@ using System.Linq;
 
 namespace acmevalidator
 {
-    public class acmevalidator
+    public class Validator
     {
         public JObject Rules { get; internal set; }
 
-        public acmevalidator()
+        public Validator()
         {
         }
 
-        public acmevalidator(JObject rules)
+        public Validator(JObject rules)
         {
             this.Rules = rules;
         }
@@ -78,8 +78,14 @@ namespace acmevalidator
             }
             else
             {
-                if (!JToken.DeepEquals(rule.Parent, input))
-                    return false;
+                if (!JToken.DeepEquals(rule.Parent, input)) // either object deep clone is equal
+                {
+                    if (rule.Value<string>() == "$required" && input.HasValues) // if rule is $required, input need value
+                        return true;
+                    else
+                        return false;
+                }
+
             }
 
             return true;
