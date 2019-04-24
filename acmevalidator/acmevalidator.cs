@@ -80,7 +80,9 @@ namespace acmevalidator
             {
                 if (!JToken.DeepEquals(rule.Parent, input)) // either object deep clone is equal
                 {
-                    if (rule.Value<string>() == "$required" && input.HasValues) // if rule is $required, input need value
+                    if (rule.Value<string>() == "$required" && input.HasValues && input.Value.Type != JTokenType.Null) // if rule is $required, input need value and not being null
+                        return true;
+                    else if (rule.Value<string>() == "$requiredOrNull" && input.HasValues)
                         return true;
                     else
                         return false;

@@ -395,5 +395,61 @@ namespace acmevalidator.tests
             // property.subpropertyB & property3 are missing
             Assert.IsTrue(equals == false && errors.Count == 2);
         }
+
+        [TestMethod]
+        public void requiredmissingnonnullproperties()
+        {
+            var acmevalidator = new global::acmevalidator.Validator();
+            var input = new JObject
+            {
+                ["property"] = new JObject {
+                    { "subpropertyA", null },
+                    { "subpropertyB", "value" }
+                },
+                ["property2"] = null,
+                ["property3"] = "3"
+            };
+            var rule = new JObject
+            {
+                ["property"] = new JObject {
+                    { "subpropertyA", "$required" },
+                    { "subpropertyB", "value" } },
+                ["property2"] = "$required",
+                ["property3"] = "3"
+            };
+
+            var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
+
+            // property.subpropertyB & property3 are missing
+            Assert.IsTrue(equals == false && errors.Count == 2);
+        }
+
+        [TestMethod]
+        public void requirednonnullproperties()
+        {
+            var acmevalidator = new global::acmevalidator.Validator();
+            var input = new JObject
+            {
+                ["property"] = new JObject {
+                    { "subpropertyA", null },
+                    { "subpropertyB", "value" }
+                },
+                ["property2"] = null,
+                ["property3"] = "3"
+            };
+            var rule = new JObject
+            {
+                ["property"] = new JObject {
+                    { "subpropertyA", "$requiredOrNull" },
+                    { "subpropertyB", "value" } },
+                ["property2"] = "$requiredOrNull",
+                ["property3"] = "3"
+            };
+
+            var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
+
+            // property.subpropertyB & property3 are missing
+            Assert.IsTrue(equals == true);
+        }
     }
 }
