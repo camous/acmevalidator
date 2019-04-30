@@ -448,7 +448,6 @@ namespace acmevalidator.tests
 
             var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
 
-            // property.subpropertyB & property3 are missing
             Assert.IsTrue(equals == true);
         }
     }
