@@ -425,6 +425,32 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
+        public void requiredmissingnonnullpropertiesignored()
+        {
+            var acmevalidator = new global::acmevalidator.Validator();
+            var input = new JObject
+            {
+                ["property"] = new JObject {
+                    { "subpropertyB", "value" }
+                },
+                ["property3"] = "3"
+            };
+            var rule = new JObject
+            {
+                ["property"] = new JObject {
+                    { "subpropertyA", "$requiredOrNull" },
+                    { "subpropertyB", "value" } },
+                ["property2"] = "$required",
+                ["property3"] = "3"
+            };
+
+            var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors, true);
+
+            // property.subpropertyB & property3 are missing, but we don't care.
+            Assert.IsTrue(equals == true && errors.Count == 0);
+        }
+
+        [TestMethod]
         public void requirednonnullproperties()
         {
             var acmevalidator = new global::acmevalidator.Validator();
