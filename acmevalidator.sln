@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "acmevalidator.tests", "acme
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "acmevalidator", "acmevalidator\acmevalidator.csproj", "{EB95CF41-9E96-4817-875B-7C2CC3623393}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp2", "ConsoleApp2\ConsoleApp2.csproj", "{686208DA-FAB6-4CC6-BC5F-CE8FA4D95CE8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{EB95CF41-9E96-4817-875B-7C2CC3623393}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB95CF41-9E96-4817-875B-7C2CC3623393}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB95CF41-9E96-4817-875B-7C2CC3623393}.Release|Any CPU.Build.0 = Release|Any CPU
-		{686208DA-FAB6-4CC6-BC5F-CE8FA4D95CE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{686208DA-FAB6-4CC6-BC5F-CE8FA4D95CE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{686208DA-FAB6-4CC6-BC5F-CE8FA4D95CE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{686208DA-FAB6-4CC6-BC5F-CE8FA4D95CE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
