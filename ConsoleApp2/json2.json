@@ -1,0 +1,98 @@
+{
+  "absence": null,
+  "activitytype": {
+    "id": "MAGR8A",
+    "name": "professional lev. 8a"
+  },
+  "birthdate": "1954-07-20T00:00:00Z",
+  "careerpath": "Business/Domain Speciality",
+  "company": {
+    "companycode": "0900",
+    "costcenterid": "0090006010",
+    "costcentername": "Digital & Strategy (D&S)",
+    "region": "ger"
+  },
+  "contract": {
+    "active": 1,
+    "category": "Professional",
+    "hrid": 8392,
+    "lookup": "employeecontract"
+  },
+  "firstname": "Sabine",
+  "fullname": "Schwarz, Sabine",
+  "fulltimeequivalent": 90,
+  "gender": "F",
+  "internalposition": "N.A.",
+  "jobcode": {
+    "id": 22101,
+    "name": "Senior Business Advisor"
+  },
+  "lastname": "Schwarz",
+  "level": "Senior Manager",
+  "location": {
+    "country": "Germany",
+    "countrycrmguid": "D38B5FF9-D865-E111-916D-0050568D011D",
+    "countryiso": "DE",
+    "countrysid": 276,
+    "lookup": "employeelocation",
+    "office": "Dusseldorf",
+    "officecode": "DUS",
+    "officecodecrmguid": "9075B5E7-DE65-E111-916D-0050568D011D",
+    "officepostalcode": "40474",
+    "officestreetaddress": "Karl-Arnold-Platz 1"
+  },
+  "login": "sabine.schwarz",
+  "manager": {
+    "crmguid": "4C61FC22-1D02-E611-80E0-5065F38AFAC1",
+    "email": "matthias.hoehne@bearingpoint.com",
+    "fullname": "Höhne, Matthias",
+    "hrid": 8529,
+    "identifier": 4003687,
+    "login": "matthias.hoehne",
+    "lookup": "employee",
+    "userprincipalname": "matthias.hoehne@bearingpoint.com"
+  },
+  "mobile": "+49 173 5764478",
+  "nationality": "DE",
+  "organizationalmanagement": {
+    "countryid": "01",
+    "industry": "pi",
+    "industryid": "60005187",
+    "operatingunit": "consulting",
+    "operatingunitid": 3,
+    "serviceline": "d&s",
+    "servicelineid": "60005470",
+    "servicelineservice": "d&s-commerc",
+    "servicelineserviceid": "60005471"
+  },
+  "partner": {
+    "crmguid": "4C61FC22-1D02-E611-80E0-5065F38AFAC1",
+    "email": "matthias.hoehne@bearingpoint.com",
+    "fullname": "Höhne, Matthias",
+    "hrid": 8529,
+    "identifier": 4003687,
+    "login": "matthias.hoehne",
+    "lookup": "employee",
+    "userprincipalname": "matthias.hoehne@bearingpoint.com"
+  },
+  "phone": "+49 211 17143 5768",
+  "product": null,
+  "reference": {
+    "crmguid": "B9FCE2FA-3602-E611-80DA-5065F38B2661",
+    "email": "sabine.schwarz@bearingpoint.com",
+    "fullname": "Schwarz, Sabine",
+    "hrid": 8392,
+    "identifier": 4003674,
+    "login": "sabine.schwarz",
+    "lookup": "employee",
+    "userprincipalname": "sabine.schwarz@bearingpoint.com"
+  },
+  "status": {
+    "absence": false,
+    "hiredate": "1990-12-01T00:00:00Z",
+    "id": 3,
+    "name": "active",
+    "rehiredate": null,
+    "termdate": null
+  }
+}
