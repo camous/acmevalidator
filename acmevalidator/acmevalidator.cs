@@ -42,8 +42,9 @@ namespace acmevalidator
             if (rules == null)
                 throw new Exception("No rules were defined");
 
+            var _rules = (JObject)rules.DeepClone();
             if (ignoreRequired)
-                RemoveRequiredProperties(rules);
+                RemoveRequiredProperties(_rules);
 
             errors = new Dictionary<JToken, JToken>();
 
@@ -51,7 +52,7 @@ namespace acmevalidator
             foreach (var token in input.DescendantsAndSelf().OfType<JProperty>())
             {
                 // prevents comparison of full first level Object (see tests nestedproperties)
-                var tokenrule = rules.SelectToken(token.Path);
+                var tokenrule = _rules.SelectToken(token.Path);
                 if (token.Value.Type != JTokenType.Object || (tokenrule != null && tokenrule.Type == JTokenType.Null))
                 {
                     if (tokenrule != null)
@@ -65,7 +66,7 @@ namespace acmevalidator
                 }
             }
 
-            foreach (var leftover in rules.OfType<JProperty>())
+            foreach (var leftover in _rules.OfType<JProperty>())
                 if (leftover.Value.Count() != 0 || leftover.Value.Type != JTokenType.Object)
                     errors.Add(leftover, null);
 

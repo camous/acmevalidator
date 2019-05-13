@@ -476,5 +476,20 @@ namespace acmevalidator.tests
 
             Assert.IsTrue(equals == true);
         }
+
+        [TestMethod]
+        public void nonrequiredrequiredfollow()
+        {
+            // we had a bug in version 2.2.0 where 2 tests of required field in a row were not consistent
+
+            var rule = new JObject { { "property", "$required" } };
+            var validator = new acmevalidator.Validator(rule);
+
+            var input1 = new JObject { { "property", "value" } };
+            var input2 = new JObject();
+
+            Assert.IsTrue(validator.Validate(input1));
+            Assert.IsFalse(validator.Validate(input2, out Dictionary<JToken,JToken> error));
+        }
     }
 }
