@@ -85,7 +85,32 @@ rules
     // delta : {"propertynotininput" : "value", null}
 ```
 
-Not implemented yet
+`acmevalidator` supports `$required` and `$requiredOrNull` for checking minimum set of fields
+
+input
+```json
+{
+    "lastname" : "Dupont",
+    "prefixname" : null
+}
+```
+
+rules
+```json
+{
+    "firstname" : "$required",
+    "lastname" : "$required",
+    "prefixname" : "$requiredOrNull"
+}
+```
+
+```csharp
+    new acmevalidator().Validate(input, rule, out Dictionary<JToken,JToken> delta); // return False
+    // delta : {"firstname" : "$required", null}
+```
+
+
+Not implemented *yet*
 
 * `not` operator support
 * `or` operator for several properties
