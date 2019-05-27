@@ -84,12 +84,14 @@ namespace acmevalidator
             {
                 if (!JToken.DeepEquals(rule.Parent, input)) // either object deep clone is equal
                 {
-                    if (rule.Value<string>() == requiredkeywork && input.HasValues && input.Value.Type != JTokenType.Null) // if rule is $required, input need value and not being null
+                    if (rule.Type == JTokenType.String)
+                    {
+                        if (rule.Value<string>() == requiredkeywork && input.HasValues && input.Value.Type != JTokenType.Null || // if rule is $required, input need value and not being null
+                            rule.Value<string>() == requiredornullkeywork && input.HasValues)
                             return true;
-                    else if (rule.Value<string>() == requiredornullkeywork && input.HasValues)
-                            return true;
-                    else
-                        return false;
+                    }
+                    
+                    return false;
                 }
 
             }

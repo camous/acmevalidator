@@ -491,5 +491,24 @@ namespace acmevalidator.tests
             Assert.IsTrue(validator.Validate(input1));
             Assert.IsFalse(validator.Validate(input2, out Dictionary<JToken,JToken> error));
         }
+
+        [TestMethod]
+        public void nestedrequiredagainstnull()
+        {
+            var acmevalidator = new global::acmevalidator.Validator();
+            var input = new JObject
+            {
+                ["property"] = null
+            };
+            var rule = new JObject
+            {
+                ["property"] = new JObject {
+                    { "subproperty", "$required" }
+                }
+            };
+
+            var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
+            Assert.IsTrue(equals == false);
+        }
     }
 }
