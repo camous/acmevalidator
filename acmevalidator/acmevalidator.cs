@@ -58,7 +58,7 @@ namespace acmevalidator
                     if (tokenrule != null)
                     {
                         if (!ValidateToken(tokenrule, token))
-                            errors.Add(tokenrule.Parent, token);
+                            errors.Add(new JObject { { tokenrule.Path, tokenrule } }, new JObject {{ token.Path, token.Value }});
 
                         // either matching or not, we remove the matched token
                         tokenrule.Parent.Remove();
@@ -68,7 +68,7 @@ namespace acmevalidator
 
             foreach (var leftover in _rules.OfType<JProperty>())
                 if (leftover.Value.Count() != 0 || leftover.Value.Type != JTokenType.Object)
-                    errors.Add(leftover, null);
+                    errors.Add(new JObject { { leftover.Path, leftover.Value } }, null);
 
             return !errors.Any();
         }
