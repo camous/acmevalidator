@@ -6,12 +6,12 @@ using System.Collections.Generic;
 namespace acmevalidator.tests
 {
     [TestClass]
-    public class acmevalidatortests
+    public class AcmevalidatorTests
     {
         [TestMethod]
-        public void nullproperty()
+        public void NullProperty()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject { { "property", null } };
             var rule = new JObject { { "property", null } };
 
@@ -19,32 +19,32 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void nullpropertyagainstobject()
+        public void NullPropertyAgainstObject()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject { { "property", new JObject { { "subproperty", "value" } } } };
             var rule = new JObject { { "property", null } };
-
-            var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
+            _ = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
 
             Assert.IsTrue(errors.Count == 1);
         }
 
         [TestMethod]
-        public void nullpropertyagainstnullobject()
+        public void NullPropertyAgainstNullObject()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject { { "property", new JObject { { "subproperty", "value" } } } };
-            var rule = new JObject {  };
-            
+            var rule = new JObject { };
+
             Assert.IsTrue(acmevalidator.Validate(input, rule));
         }
 
         [TestMethod]
-        public void nestedproperty()
+        public void NestedProperty()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
-            var input = new JObject {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
                 ["property"] = new JObject { { "country", "France" } }
             };
             var rule = new JObject
@@ -56,9 +56,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void nestedproperties()
+        public void NestedProperties()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -79,9 +79,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void nestedpropertiesarray()
+        public void NestedPropertiesArray()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -102,9 +102,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void mismatchnestedproperties()
+        public void MismatchNestedProperties()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -123,9 +123,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void propertyarray()
+        public void PropertyArray()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 { "property", "FR" }
@@ -140,9 +140,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void propertyarrayinteger()
+        public void PropertyArrayInteger()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 { "property", 1 }
@@ -157,9 +157,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void mismatchpropertyarrayinteger()
+        public void MismatchPropertyArrayInteger()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 { "property", 4 }
@@ -174,9 +174,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void mismatchpropertyarray()
+        public void MismatchPropertyArray()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 { "property", "FR" }
@@ -191,9 +191,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void mismatchnestedpropertyarray()
+        public void MismatchNestedPropertyArray()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -210,9 +210,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void propertyarraymix()
+        public void PropertyArrayMix()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 { "property", null }
@@ -227,9 +227,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void mixnestedproperties()
+        public void MixNestedProperties()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -248,14 +248,13 @@ namespace acmevalidator.tests
                 ["property2"] = 2
             };
 
-            var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
             Assert.IsTrue(acmevalidator.Validate(input, rule));
         }
 
         [TestMethod]
-        public void errormessage()
+        public void ErrorMessage()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -273,9 +272,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void testcasesensitive()
+        public void TestCaseSensitive()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject { { "property", "france" } };
             var rule = new JObject { { "property", "France" } };
 
@@ -283,17 +282,17 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void noonerules()
+        public void NoOneRules()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
 
             Assert.ThrowsException<Exception>(() => acmevalidator.Validate(new JObject()));
         }
 
         [TestMethod]
-        public void partialmissingproperties()
+        public void PartialMissingProperties()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -312,13 +311,13 @@ namespace acmevalidator.tests
             var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
 
             // property.subpropertyB & property3 are missing
-            Assert.IsTrue(equals == false && errors.Count == 2); 
+            Assert.IsTrue(equals == false && errors.Count == 2);
         }
 
         [TestMethod]
-        public void missingproperties()
+        public void MissingProperties()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -343,9 +342,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void requiredproperties()
+        public void RequiredProperties()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -363,17 +362,16 @@ namespace acmevalidator.tests
                 ["property2"] = "$required",
                 ["property3"] = "3"
             };
-
-            var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
+            var equals = acmevalidator.Validate(input, rule, out _);
 
             // property.subpropertyB & property3 are missing
             Assert.IsTrue(equals);
         }
 
         [TestMethod]
-        public void missingrequiredproperties()
+        public void MissingRequiredProperties()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -397,9 +395,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void requiredmissingnonnullproperties()
+        public void RequiredMissingNonNullProperties()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -425,9 +423,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void requiredmissingnonnullpropertiesignored()
+        public void RequiredMissingNonNullPropertiesIgnored()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -451,9 +449,9 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
-        public void requirednonnullproperties()
+        public void RequiredNonNullProperties()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = new JObject {
@@ -471,31 +469,30 @@ namespace acmevalidator.tests
                 ["property2"] = "$requiredOrNull",
                 ["property3"] = "3"
             };
-
-            var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
+            var equals = acmevalidator.Validate(input, rule, out _);
 
             Assert.IsTrue(equals == true);
         }
 
         [TestMethod]
-        public void nonrequiredrequiredfollow()
+        public void NonRequiredRequiredFollow()
         {
             // we had a bug in version 2.2.0 where 2 tests of required field in a row were not consistent
 
             var rule = new JObject { { "property", "$required" } };
-            var validator = new acmevalidator.Validator(rule);
+            var validator = new Validator(rule);
 
             var input1 = new JObject { { "property", "value" } };
             var input2 = new JObject();
 
             Assert.IsTrue(validator.Validate(input1));
-            Assert.IsFalse(validator.Validate(input2, out Dictionary<JToken,JToken> error));
+            Assert.IsFalse(validator.Validate(input2, out _));
         }
 
         [TestMethod]
-        public void nestedrequiredagainstnull()
+        public void NestedRequiredAgainstNull()
         {
-            var acmevalidator = new global::acmevalidator.Validator();
+            var acmevalidator = new Validator();
             var input = new JObject
             {
                 ["property"] = null
@@ -506,9 +503,66 @@ namespace acmevalidator.tests
                     { "subproperty", "$required" }
                 }
             };
-
-            var equals = acmevalidator.Validate(input, rule, out Dictionary<JToken, JToken> errors);
+            var equals = acmevalidator.Validate(input, rule, out _);
             Assert.IsTrue(equals == false);
+        }
+
+        [TestMethod]
+        public void HasAllTheRequiredPropertiesMethod_IsMissingRequiredSubproperties()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "subpropertyA", null },
+                        { "subpropertyB", null },
+                        { "subpropertyC", "value" }
+                },
+                ["property2"] = null
+            };
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "subpropertyA", "$required" },
+                        { "subpropertyB", "$required" },
+                        { "subpropertyC", "$required" }
+                },
+                ["property2"] = "$required"
+            };
+            acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsFalse(acmevalidator.HasAllTheRequiredProperties(errors));
+        }
+
+        [TestMethod]
+        public void HasAllTheRequiredPropertiesMethod_HasAllTheRequiredSubproperties()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "subpropertyA", "value" },
+                        { "subpropertyB", "value" },
+                        { "subpropertyC", "value" }
+                },
+                ["property2"] = "value"
+            };
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "subpropertyA", "$required" },
+                        { "subpropertyB", "$required" },
+                        { "subpropertyC", "$required" }
+                },
+                ["property2"] = "$required"
+            };
+            acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsTrue(acmevalidator.HasAllTheRequiredProperties(errors));
         }
     }
 }

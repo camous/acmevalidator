@@ -17,18 +17,18 @@ namespace acmevalidator
 
         public Validator(JObject rules)
         {
-            this.Rules = rules;
+            Rules = rules;
         }
 
         public bool Validate(JObject input, bool ignoreRequired = false)
         {
             var errors = new Dictionary<JToken, JToken>();
-            return Validate(input, this.Rules, out errors, ignoreRequired);
+            return Validate(input, Rules, out errors, ignoreRequired);
         }
 
         public bool Validate(JObject input, out Dictionary<JToken, JToken> errors, bool ignoreRequired = false)
         {
-            return Validate(input, this.Rules, out errors, ignoreRequired);
+            return Validate(input, Rules, out errors, ignoreRequired);
         }
 
         public bool Validate(JObject input, JObject rules, bool ignoreRequired = false)
@@ -40,11 +40,15 @@ namespace acmevalidator
         public bool Validate(JObject input, JObject rules, out Dictionary<JToken, JToken> errors, bool ignoreRequired = false)
         {
             if (rules == null)
+            {
                 throw new Exception("No rules were defined");
+            }
 
             var _rules = (JObject)rules.DeepClone();
             if (ignoreRequired)
+            {
                 RemoveRequiredProperties(_rules);
+            }
 
             errors = new Dictionary<JToken, JToken>();
 
@@ -53,13 +57,25 @@ namespace acmevalidator
             {
                 // prevents comparison of full first level Object (see tests nestedproperties)
                 var tokenrule = _rules.SelectToken(token.Path);
+
                 if (token.Value.Type != JTokenType.Object || (tokenrule != null && tokenrule.Type == JTokenType.Null))
                 {
                     if (tokenrule != null)
                     {
                         if (!ValidateToken(tokenrule, token))
-                            errors.Add(new JObject { { tokenrule.Path, tokenrule } }, new JObject {{ token.Path, token.Value }});
-
+                        {
+                            errors.Add(
+                                new JObject {
+                                    {
+                                        tokenrule.Path, tokenrule
+                                    }},
+                                new JObject
+                                {
+                                    {
+                                        token.Path, token.Value
+                                    }
+                                });
+                        }
                         // either matching or not, we remove the matched token
                         tokenrule.Parent.Remove();
                     }
@@ -67,18 +83,51 @@ namespace acmevalidator
             }
 
             foreach (var leftover in _rules.OfType<JProperty>())
+            {
                 if (leftover.Value.Count() != 0 || leftover.Value.Type != JTokenType.Object)
+                {
                     errors.Add(new JObject { { leftover.Path, leftover.Value } }, null);
-
+                }
+            }
             return !errors.Any();
+        }
+
+        public bool HasAllTheRequiredProperties(Dictionary<JToken, JToken> errors, bool ignoreRequired = false)
+        {
+            bool hasAllTheRequiredProperties = true;
+
+            if (errors.Count == 0)
+            {
+                hasAllTheRequiredProperties = true;
+            }
+            else
+            {
+                foreach (KeyValuePair<JToken, JToken> error in errors)
+                {
+                    foreach (JProperty child in error.Value.Children<JProperty>())
+                    {
+                        if (ignoreRequired == false && string.IsNullOrEmpty(child.Value.ToString()))
+                        {
+                            hasAllTheRequiredProperties = false;
+                        }
+                    }
+                    if (!hasAllTheRequiredProperties)
+                    {
+                        break;
+                    }
+                }
+            }
+            return hasAllTheRequiredProperties;
         }
 
         private bool ValidateToken(JToken rule, JProperty input)
         {
             if (rule.Type == JTokenType.Array) // supporting rule with array pattern ["FR","AT","DE"] (OR operator)
             {
-                if (!rule.Any(x => JToken.Equals(x, input.Value)))
+                if (!rule.Any(x => Equals(x, input.Value)))
+                {
                     return false;
+                }
             }
             else
             {
@@ -86,16 +135,17 @@ namespace acmevalidator
                 {
                     if (rule.Type == JTokenType.String)
                     {
-                        if (rule.Value<string>() == requiredkeywork && input.HasValues && input.Value.Type != JTokenType.Null || // if rule is $required, input need value and not being null
-                            rule.Value<string>() == requiredornullkeywork && input.HasValues)
+                        if (rule.Value<string>() == requiredkeywork && input.HasValues
+                            && input.Value.Type != JTokenType.Null
+                            // if rule is $required, input need value and not being null
+                            || rule.Value<string>() == requiredornullkeywork && input.HasValues)
+                        {
                             return true;
+                        }
                     }
-                    
                     return false;
                 }
-
             }
-
             return true;
         }
 
@@ -103,8 +153,8 @@ namespace acmevalidator
         {
             // if ignoring $required and $requiredOrNull, removing upfront from rules for not touching comparison methods
             var stringproperties = rules.DescendantsAndSelf()
-                .OfType<JProperty>().
-                Where(x => x.Value.Type == JTokenType.String);
+                .OfType<JProperty>()
+                .Where(x => x.Value.Type == JTokenType.String);
 
             foreach (var requiredtoken in stringproperties.Where(x =>
                     new string[] { requiredkeywork, requiredornullkeywork }.Contains(x.Value.Value<string>())).ToList())
