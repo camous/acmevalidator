@@ -533,7 +533,7 @@ namespace acmevalidator.tests
             };
             acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
 
-            Assert.IsFalse(acmevalidator.HasAllTheRequiredProperties(errors));
+            Assert.IsFalse(Validator.HasAllTheRequiredProperties(errors));
         }
 
         [TestMethod]
@@ -562,7 +562,7 @@ namespace acmevalidator.tests
             };
             acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
 
-            Assert.IsTrue(acmevalidator.HasAllTheRequiredProperties(errors));
+            Assert.IsTrue(Validator.HasAllTheRequiredProperties(errors));
         }
     }
 }

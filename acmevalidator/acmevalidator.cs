@@ -92,7 +92,7 @@ namespace acmevalidator
             return !errors.Any();
         }
 
-        public bool HasAllTheRequiredProperties(Dictionary<JToken, JToken> errors, bool ignoreRequired = false)
+        public static bool HasAllTheRequiredProperties(Dictionary<JToken, JToken> errors)
         {
             bool hasAllTheRequiredProperties = true;
 
@@ -106,7 +106,7 @@ namespace acmevalidator
                 {
                     foreach (JProperty child in error.Value.Children<JProperty>())
                     {
-                        if (ignoreRequired == false && string.IsNullOrEmpty(child.Value.ToString()))
+                        if (string.IsNullOrEmpty(child.Value.ToString()))
                         {
                             hasAllTheRequiredProperties = false;
                         }
