@@ -564,5 +564,33 @@ namespace acmevalidator.tests
 
             Assert.IsTrue(Validator.HasAllTheRequiredProperties(errors));
         }
+
+        [TestMethod]
+        public void HasAllTheRequiredPropertiesMethod_RequiredFieldMissingFromInput()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "subpropertyA", "value" },
+                        { "subpropertyB", "value" },
+                        { "subpropertyC", "value" }
+                }
+            };
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "subpropertyA", "$required" },
+                        { "subpropertyB", "$required" },
+                        { "subpropertyC", "$required" }
+                },
+                ["property2"] = "$required"
+            };
+            acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsFalse(Validator.HasAllTheRequiredProperties(errors));
+        }
     }
 }
