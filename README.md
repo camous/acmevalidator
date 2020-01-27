@@ -109,10 +109,26 @@ rules
     // delta : {"firstname" : "$required", null}
 ```
 
+support for negation
+```json
+{
+    "country" : {
+        "!" : "France"
+    }
+}
+```
+
+```json
+{
+    "country" : {
+        "!" : ["France", "Austria", "Romania"]
+    }
+}
+```
+
 
 Not implemented *yet*
 
-* `not` operator support
 * `or` operator for several properties
 
 ## Delta description
