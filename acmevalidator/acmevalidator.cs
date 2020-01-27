@@ -58,11 +58,14 @@ namespace acmevalidator
                 // prevents comparison of full first level Object (see tests nestedproperties)
                 var tokenrule = _rules.SelectToken(token.Path);
 
+                var notTokenrule = (tokenrule as JObject)?.Property("!")?.Value;
+                tokenrule = notTokenrule ?? tokenrule; // if a negative token rule, we pass only the value but flag we are in not mode with notTokenrule != null
+
                 if (token.Value.Type != JTokenType.Object || (tokenrule != null && tokenrule.Type == JTokenType.Null))
                 {
                     if (tokenrule != null)
                     {
-                        if (!ValidateToken(tokenrule, token))
+                        if (!ValidateToken(tokenrule, token, notTokenrule != null))
                         {
                             errors.Add(
                                 new JObject {
@@ -77,7 +80,11 @@ namespace acmevalidator
                                 });
                         }
                         // either matching or not, we remove the matched token
-                        tokenrule.Parent.Remove();
+                        
+                        if (notTokenrule != null)
+                            tokenrule.Parent.Parent.Parent.Remove();
+                        else
+                            tokenrule.Parent.Remove();
                     }
                 }
             }
@@ -125,18 +132,22 @@ namespace acmevalidator
             return hasAllTheRequiredProperties;
         }
 
-        private bool ValidateToken(JToken rule, JProperty input)
+        private bool ValidateToken(JToken rule, JProperty input, bool invert = false)
         {
             if (rule.Type == JTokenType.Array) // supporting rule with array pattern ["FR","AT","DE"] (OR operator)
             {
                 if (!rule.Any(x => Equals(x, input.Value)))
                 {
-                    return false;
+                    return invert;
+                } else
+                {
+                    if (invert)
+                        return false;
                 }
             }
             else
             {
-                if (!JToken.DeepEquals(rule.Parent, input)) // either object deep clone is equal
+                if (!JToken.DeepEquals(rule, input.Value)) // either object deep clone is equal
                 {
                     if (rule.Type == JTokenType.String)
                     {
@@ -146,9 +157,16 @@ namespace acmevalidator
                             || rule.Value<string>() == requiredornullkeywork && input.HasValues)
                         {
                             return true;
+                        } else
+                        {
+                            return invert;
                         }
                     }
-                    return false;
+                    else
+                        return false;
+                } else
+                {
+                    return !invert;
                 }
             }
             return true;

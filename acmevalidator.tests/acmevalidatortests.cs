@@ -592,5 +592,236 @@ namespace acmevalidator.tests
 
             Assert.IsFalse(Validator.HasAllTheRequiredProperties(errors));
         }
+
+       [TestMethod]
+        public void NotOperatorSimpleValue()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = "value"
+            };
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "!", "value" }
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsFalse(equals);
+        }
+
+        [TestMethod]
+        public void NotOperatorSimpleValueSuccess()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = "not_value"
+            };
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "!", "value" }
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
+        public void NotOperatorSimpleValueMany()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = "not_value",
+                ["property2"] = "value",
+
+            };
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "!", "value" }
+                },
+                ["property2"] = "value"
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
+        public void NotOperatorSimpleValueNested()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "subpropertyA", "value" },
+                        { "subpropertyB", "value" },
+                        { "subpropertyC", "value" }
+                }
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        {   "subpropertyA", new JObject {
+                                { "!", "value" }
+                            } 
+                        },
+                        { "subpropertyB" , "value" }
+
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsFalse(equals);
+        }
+
+        [TestMethod]
+        public void NotOperatorSimpleValueNestedSuccess()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "subpropertyA", "value" },
+                        { "subpropertyB", "value" }
+                }
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        {   "subpropertyA", new JObject {
+                                { "!", "not_value" }
+                            } 
+                        }
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
+        public void NotOperatorSimpleValueNestedSuccessMany()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "subpropertyA", "value" },
+                        { "subpropertyB", "value" },
+                        { "subpropertyC", "value" }
+                }
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        {   "subpropertyA", new JObject {
+                                { "!", "not_value" }
+                            } 
+                        },
+                        { "subpropertyB" , "value" }
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
+        public void NotOperatorSimpleArray()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = "value"
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    { "!", new JArray
+                    {
+                        "value",
+                        "value2"
+                    } }
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsFalse(equals);
+        }
+
+        [TestMethod]
+        public void NotOperatorSimpleArraySuccess()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = "value"
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    { "!", new JArray
+                    {
+                        "not_value1",
+                        "not_value2"
+                    } }
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
+        public void NotOperatorNestedArray()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "subpropertyA", "value" }
+                }
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    ["subpropertyA"] = new JObject
+                    { { "!", new JArray
+                    {
+                        "value",
+                        "not_value2"
+                    } } }
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsFalse(equals);
+        }
     }
 }
