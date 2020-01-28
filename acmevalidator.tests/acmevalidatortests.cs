@@ -634,6 +634,96 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
+        public void NotOperatorSimpleIntegerValue()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = 1000
+            };
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "!", 1000 }
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsFalse(equals);
+        }
+
+        [TestMethod]
+        public void NotOperatorSimpleIntegerValueSuccess()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = 999
+            };
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "!", 1000 }
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
+        public void NotOperatorSimpleIntegerArray()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = 1000
+            };
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "!", new JArray
+                            {
+                        1000,
+                        999
+                        }
+                    } 
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsFalse(equals);
+        }
+
+        [TestMethod]
+        public void NotOperatorSimpleIntegerArraySuccess()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = 999
+            };
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "!", new JArray
+                            {
+                        1000,
+                        998
+                        }
+                    } 
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
         public void NotOperatorSimpleValueMany()
         {
             var acmevalidator = new Validator();

@@ -163,7 +163,7 @@ namespace acmevalidator
                         }
                     }
                     else
-                        return false;
+                        return invert;
                 } else
                 {
                     return !invert;
