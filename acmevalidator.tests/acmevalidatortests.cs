@@ -614,6 +614,26 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
+        public void NotOperatorNullValue()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = null
+            };
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                        { "!", "value" }
+                }
+            };
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
         public void NotOperatorSimpleValueSuccess()
         {
             var acmevalidator = new Validator();
