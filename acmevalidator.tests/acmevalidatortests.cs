@@ -107,6 +107,34 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
+        public void MistmatchLevel3NestedArrayProperty()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property"] = new JObject
+                {
+                    ["country"] = new JObject
+                    {
+                        ["city"] = "paris"
+                    }
+                }
+            };
+            var rule = new JObject
+            {
+                ["property"] = new JObject
+                {
+                    ["country"] = new JObject
+                    {
+                        ["city"] = new JArray { "chaville" , "puteaux"}
+                    }
+                }
+            };
+
+            Assert.IsFalse(acmevalidator.Validate(input, rule));
+        }
+
+        [TestMethod]
         public void MismatchLevel3NestedProperty()
         {
             var acmevalidator = new Validator();
