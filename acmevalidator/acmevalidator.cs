@@ -52,7 +52,6 @@ namespace acmevalidator
 
             errors = new Dictionary<JToken, JToken>();
 
-            // today we get as input ACME format which is only 2 level deep, let's not over engineer for now
             foreach (var token in input.DescendantsAndSelf().OfType<JProperty>())
             {
                 // prevents comparison of full first level Object (see tests nestedproperties)
@@ -89,13 +88,10 @@ namespace acmevalidator
                 }
             }
 
-            foreach (var leftover in _rules.OfType<JProperty>())
-            {
-                if (leftover.Value.Count() != 0 || leftover.Value.Type != JTokenType.Object)
-                {
-                    errors.Add(new JObject { { leftover.Path, leftover.Value } }, null);
-                }
-            }
+            // all remaining JValue token left in the rules object means that it's missing
+            foreach (var leftover in _rules.Descendants().OfType<JValue>())
+                errors.Add(new JObject { { leftover.Path, leftover } }, null);
+
             return !errors.Any();
         }
 

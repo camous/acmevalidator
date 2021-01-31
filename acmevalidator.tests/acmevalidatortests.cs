@@ -79,6 +79,63 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
+        public void Level3NestedProperty()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property"] = new JObject
+                {
+                    ["country"] = new JObject {
+                        ["city"] = "chaville"
+                    },
+                    ["subproperty"] = "hello"
+                }
+            };
+            var rule = new JObject
+            {
+                ["property"] = new JObject
+                {
+                    ["country"] = new JObject
+                    {
+                        ["city"] = "chaville"
+                    }
+                }
+            };
+
+            Assert.IsTrue(acmevalidator.Validate(input, rule));
+        }
+
+        [TestMethod]
+        public void MismatchLevel3NestedProperty()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property"] = new JObject
+                {
+                    ["country"] = new JObject
+                    {
+                        ["city"] = "chaville"
+                    }
+                }
+            };
+            var rule = new JObject
+            {
+                ["property"] = new JObject
+                {
+                    ["country"] = new JObject
+                    {
+                        ["city"] = "puteaux",
+                        ["city2"] = "puteaux"
+                    }
+                }
+            };
+
+            Assert.IsFalse(acmevalidator.Validate(input, rule));
+        }
+
+        [TestMethod]
         public void NestedPropertiesArray()
         {
             var acmevalidator = new Validator();
