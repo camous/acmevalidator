@@ -24,7 +24,7 @@ rules
     new acmevalidator().Validate(input, rule); // return True
 ```
 
-`acmevalidator` supports several properties rule and nested objects (2 levels). All properties are forming `AND` operator.
+`acmevalidator` supports several properties rule and nested objects. All properties are forming `AND` operator.
 
 input
 ```json
@@ -56,6 +56,7 @@ rules (location.country = `France` AND location.office = `Paris` AND fulltime = 
     new acmevalidator().Validate(input, rule); // return True
 ```
 
+## operator OR for values
 `acmevalidator` supports `OR` operator for one or several properties with json array form
 
 rules
@@ -85,6 +86,32 @@ rules
     // delta : {"propertynotininput" : "value", null}
 ```
 
+## operator ! negation
+
+single value
+```json
+{
+    "location" : {
+        "country" : {
+            "!" : "France"
+        }
+    }
+}
+```
+
+several values : country NOT France `AND` country NOT Austria `AND` country NOT Romania
+```json
+{
+    "location" : {
+        "country" : {
+            "!" : ["France", "Austria", "Romania"]
+        }
+    }
+}
+```
+
+## special values : $required / $requiredOrNull
+
 `acmevalidator` supports `$required` and `$requiredOrNull` for checking minimum set of fields
 
 input
@@ -108,28 +135,6 @@ rules
     new acmevalidator().Validate(input, rule, out Dictionary<JToken,JToken> delta); // return False
     // delta : {"firstname" : "$required", null}
 ```
-
-support for negation
-```json
-{
-    "country" : {
-        "!" : "France"
-    }
-}
-```
-
-```json
-{
-    "country" : {
-        "!" : ["France", "Austria", "Romania"]
-    }
-}
-```
-
-
-Not implemented *yet*
-
-* `or` operator for several properties
 
 ## Delta description
 
