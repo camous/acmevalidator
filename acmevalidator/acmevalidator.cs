@@ -7,6 +7,14 @@ namespace acmevalidator
 {
     public class Validator
     {
+        enum Modifier
+        {
+            NoModifier = 0,
+            Negation = '!',
+            Like = '%',
+            CaseInsensitive = '~'
+        }
+
         public JObject Rules { get; internal set; }
         private readonly string requiredkeywork = "$required";
         private readonly string requiredornullkeywork = "$requiredOrNull";
@@ -52,19 +60,17 @@ namespace acmevalidator
 
             errors = new Dictionary<JToken, JToken>();
 
-            foreach (var token in input.DescendantsAndSelf().OfType<JProperty>())
+            var tokens = input.DescendantsAndSelf().OfType<JProperty>().Where(x => x.Value.Type != JTokenType.Object);
+            foreach (var token in tokens)
             {
                 // prevents comparison of full first level Object (see tests nestedproperties)
                 var tokenrule = _rules.SelectToken(token.Path);
-
-                var notTokenrule = (tokenrule as JObject)?.Property("!")?.Value;
-                tokenrule = notTokenrule ?? tokenrule; // if a negative token rule, we pass only the value but flag we are in not mode with notTokenrule != null
 
                 if (token.Value.Type != JTokenType.Object || (tokenrule != null && tokenrule.Type == JTokenType.Null))
                 {
                     if (tokenrule != null)
                     {
-                        if (!ValidateToken(tokenrule, token, notTokenrule != null))
+                        if (!ValidateToken(tokenrule, token))
                         {
                             errors.Add(
                                 new JObject {
@@ -79,11 +85,7 @@ namespace acmevalidator
                                 });
                         }
                         // either matching or not, we remove the matched token
-                        
-                        if (notTokenrule != null)
-                            tokenrule.Parent.Parent.Parent.Remove();
-                        else
-                            tokenrule.Parent.Remove();
+                        tokenrule.Parent.Remove();
                     }
                 }
             }
@@ -128,44 +130,75 @@ namespace acmevalidator
             return hasAllTheRequiredProperties;
         }
 
-        private bool ValidateToken(JToken rule, JProperty input, bool invert = false)
+        private bool ValidateToken(JToken rule, JProperty input)
         {
-            if (rule.Type == JTokenType.Array) // supporting rule with array pattern ["FR","AT","DE"] (OR operator)
+            // get operator if existing
+            Modifier modifier= Modifier.NoModifier;
+            
+            if (rule.Type == JTokenType.Object)
             {
-                if (!rule.Any(x => Equals(x, input.Value)))
+                foreach(var modifiertype in Enum.GetValues(typeof(Modifier)).OfType<Modifier>())
                 {
-                    return invert;
-                } else
-                {
-                    if (invert)
-                        return false;
+                    var modifierkey = ((char)modifiertype).ToString();
+
+                    if (rule[modifierkey] != null)
+                    {
+                        modifier = modifiertype; // we found a modifier
+                        rule = rule[modifierkey]; // we move the value up
+                        break; // we stop searching for modifier
+                    }
                 }
+            }
+
+            if (rule.Type == JTokenType.Array) // supporting rule with array pattern ["FR","AT","DE"] (OR operator), AND operator if negation detected
+            {
+                var match = rule.Any(x => Equals(x, input.Value));
+                return modifier == Modifier.Negation ? !match : match;
             }
             else
             {
-                if (!JToken.DeepEquals(rule, input.Value)) // either object deep clone is equal
-                {
-                    if (rule.Type == JTokenType.String)
-                    {
-                        if (rule.Value<string>() == requiredkeywork && input.HasValues
-                            && input.Value.Type != JTokenType.Null
-                            // if rule is $required, input need value and not being null
-                            || rule.Value<string>() == requiredornullkeywork && input.HasValues)
-                        {
-                            return true;
-                        } else
-                        {
-                            return invert;
-                        }
-                    }
-                    else
-                        return invert;
-                } else
-                {
-                    return !invert;
-                }
+                return ApplyModifier(rule, input.Value, modifier);
             }
-            return true;
+        }
+
+        private bool ApplyModifier(JToken rule, JToken input, Modifier modifier)
+        {
+            bool match;
+
+            switch (input.Type)
+            {
+                case JTokenType.String:
+                    match = rule.Value<string>().Equals(input.Value<string>(), modifier == Modifier.CaseInsensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+
+                    // $required
+                    if (rule.Value<string>() == requiredkeywork && input.Type != JTokenType.Null)
+                        match = true;
+
+                    // $requiredornull
+                    if (rule.Value<string>() == requiredornullkeywork && (input.HasValues ||input.Type == JTokenType.Null))
+                        match = true;
+
+                    if (modifier == Modifier.Like)
+                        match = input.Value<string>().Contains(rule.Value<string>());
+                    break;
+
+                case JTokenType.Null:
+                    match = rule.Type == input.Type;
+
+                    // $requiredornull
+                    if (rule.Type == JTokenType.String && rule.Value<string>() == requiredornullkeywork)
+                        match = true;
+                    break;
+
+                default:
+                    match = JValue.DeepEquals(rule, input);
+                    break;
+            }
+
+            if (modifier == Modifier.Negation)
+                match = !match;
+
+            return match;
         }
 
         private void RemoveRequiredProperties(JObject rules)

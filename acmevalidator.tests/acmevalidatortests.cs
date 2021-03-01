@@ -367,6 +367,16 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
+        public void TestCaseInsensitive()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject { { "property", "france" } };
+            var rule = new JObject { ["property"] = new JObject {{ "~", "France" } } };
+
+            Assert.IsTrue(acmevalidator.Validate(input, rule));
+        }
+
+        [TestMethod]
         public void NoOneRules()
         {
             var acmevalidator = new Validator();
@@ -619,6 +629,41 @@ namespace acmevalidator.tests
             acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
 
             Assert.IsFalse(Validator.HasAllTheRequiredProperties(errors));
+        }
+
+        [TestMethod]
+        public void LikeSimpleProperty()
+        {
+            // we had a bug in version 2.2.0 where 2 tests of required field in a row were not consistent
+
+            var rule = new JObject { 
+                ["property"] = new JObject { 
+                    ["%"] = "fabien" 
+                } };
+            var validator = new Validator(rule);
+
+            var input1 = new JObject { { "property", "hello fabien" } };
+
+            Assert.IsTrue(validator.Validate(input1));
+        }
+
+        [TestMethod]
+        public void LikeSimplePropertyMismatch()
+        {
+            // we had a bug in version 2.2.0 where 2 tests of required field in a row were not consistent
+
+            var rule = new JObject
+            {
+                ["property"] = new JObject
+                {
+                    ["%"] = "wrongfirstname"
+                }
+            };
+            var validator = new Validator(rule);
+
+            var input1 = new JObject { { "property", "hello fabien" } };
+
+            Assert.IsFalse(validator.Validate(input1));
         }
 
         [TestMethod]
