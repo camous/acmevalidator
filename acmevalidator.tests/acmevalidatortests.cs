@@ -634,8 +634,6 @@ namespace acmevalidator.tests
         [TestMethod]
         public void LikeSimpleProperty()
         {
-            // we had a bug in version 2.2.0 where 2 tests of required field in a row were not consistent
-
             var rule = new JObject { 
                 ["property"] = new JObject { 
                     ["%"] = "fabien" 
@@ -650,8 +648,6 @@ namespace acmevalidator.tests
         [TestMethod]
         public void LikeSimplePropertyMismatch()
         {
-            // we had a bug in version 2.2.0 where 2 tests of required field in a row were not consistent
-
             var rule = new JObject
             {
                 ["property"] = new JObject
