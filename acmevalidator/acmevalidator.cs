@@ -170,13 +170,8 @@ namespace acmevalidator
                 case JTokenType.String:
                     match = rule.Value<string>().Equals(input.Value<string>(), modifier == Modifier.CaseInsensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
-                    // $required
-                    if (rule.Value<string>() == requiredkeywork && input.Type != JTokenType.Null)
-                        match = true;
-
-                    // $requiredornull
-                    if (rule.Value<string>() == requiredornullkeywork && (input.HasValues ||input.Type == JTokenType.Null))
-                        match = true;
+                    // $required / $requiredOrnull
+                    ApplyWildcardOperators(ref match, rule, input);
 
                     if (modifier == Modifier.Like)
                         match = input.Value<string>().Contains(rule.Value<string>());
@@ -192,6 +187,10 @@ namespace acmevalidator
 
                 default:
                     match = JValue.DeepEquals(rule, input);
+
+                    // $required / $requiredOrnull
+                    ApplyWildcardOperators(ref match, rule, input);
+
                     break;
             }
 
@@ -199,6 +198,17 @@ namespace acmevalidator
                 match = !match;
 
             return match;
+        }
+
+        private void ApplyWildcardOperators(ref bool match, JToken rule, JToken input)
+        {
+            // $required
+            if (rule.Value<string>() == requiredkeywork && input.Type != JTokenType.Null)
+                match = true;
+
+            // $requiredornull
+            if (rule.Value<string>() == requiredornullkeywork && (input.HasValues || input.Type == JTokenType.Null))
+                match = true;
         }
 
         private void RemoveRequiredProperties(JObject rules)
