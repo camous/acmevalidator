@@ -585,6 +585,19 @@ namespace acmevalidator.tests
         }
 
         [TestMethod]
+        public void RequiredOnIntegerw()
+        {
+            // test for critical regression on 2.6.0 where $required/$requiredOrNull not working on non string/null type
+
+            var rule = new JObject { { "property", "$required" } };
+            var validator = new Validator(rule);
+
+            var input = new JObject { { "property", 10 } };
+
+            Assert.IsTrue(validator.Validate(input));
+        }
+
+        [TestMethod]
         public void NestedRequiredAgainstNull()
         {
             var acmevalidator = new Validator();
