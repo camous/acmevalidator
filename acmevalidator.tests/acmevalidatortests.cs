@@ -1072,5 +1072,26 @@ namespace acmevalidator.tests
 
             Assert.IsFalse(equals);
         }
+
+        [TestMethod]
+        public void TokenVersusProperty()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = "hello"
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    ["subpropertyA"] = "hello"
+                }
+            };
+
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+            Assert.IsFalse(equals);
+        }
     }
 }

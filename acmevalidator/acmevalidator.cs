@@ -165,6 +165,10 @@ namespace acmevalidator
         {
             bool match;
 
+            // we shouldn't have any json object at that point
+            if (rule.Type == JTokenType.Object)
+                return false;
+
             switch (input.Type)
             {
                 case JTokenType.String:
