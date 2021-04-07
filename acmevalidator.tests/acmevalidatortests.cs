@@ -86,7 +86,8 @@ namespace acmevalidator.tests
             {
                 ["property"] = new JObject
                 {
-                    ["country"] = new JObject {
+                    ["country"] = new JObject
+                    {
                         ["city"] = "chaville"
                     },
                     ["subproperty"] = "hello"
@@ -126,7 +127,7 @@ namespace acmevalidator.tests
                 {
                     ["country"] = new JObject
                     {
-                        ["city"] = new JArray { "chaville" , "puteaux"}
+                        ["city"] = new JArray { "chaville", "puteaux" }
                     }
                 }
             };
@@ -371,7 +372,7 @@ namespace acmevalidator.tests
         {
             var acmevalidator = new Validator();
             var input = new JObject { { "property", "france" } };
-            var rule = new JObject { ["property"] = new JObject {{ "~", "France" } } };
+            var rule = new JObject { ["property"] = new JObject { { "~", "France" } } };
 
             Assert.IsTrue(acmevalidator.Validate(input, rule));
         }
@@ -647,10 +648,13 @@ namespace acmevalidator.tests
         [TestMethod]
         public void LikeSimpleProperty()
         {
-            var rule = new JObject { 
-                ["property"] = new JObject { 
-                    ["%"] = "fabien" 
-                } };
+            var rule = new JObject
+            {
+                ["property"] = new JObject
+                {
+                    ["%"] = "fabien"
+                }
+            };
             var validator = new Validator(rule);
 
             var input1 = new JObject { { "property", "hello fabien" } };
@@ -673,6 +677,23 @@ namespace acmevalidator.tests
             var input1 = new JObject { { "property", "hello fabien" } };
 
             Assert.IsFalse(validator.Validate(input1));
+        }
+
+        [TestMethod]
+        public void LikeWithArray()
+        {
+            var rule = new JObject
+            {
+                ["property"] = new JObject
+                {
+                    ["%"] = new JArray { "fabien", "value" }
+                }
+            };
+            var validator = new Validator(rule);
+
+            var input = new JObject { { "property", "hello fabien" } };
+
+            Assert.IsFalse(validator.Validate(input));
         }
 
         [TestMethod]
@@ -732,7 +753,7 @@ namespace acmevalidator.tests
             Assert.IsFalse(Validator.HasAllTheRequiredProperties(errors));
         }
 
-       [TestMethod]
+        [TestMethod]
         public void NotOperatorSimpleValue()
         {
             var acmevalidator = new Validator();
@@ -849,7 +870,7 @@ namespace acmevalidator.tests
                         1000,
                         999
                         }
-                    } 
+                    }
                 }
             };
             var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
@@ -874,7 +895,7 @@ namespace acmevalidator.tests
                         1000,
                         998
                         }
-                    } 
+                    }
                 }
             };
             var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
@@ -925,7 +946,7 @@ namespace acmevalidator.tests
                 {
                         {   "subpropertyA", new JObject {
                                 { "!", "value" }
-                            } 
+                            }
                         },
                         { "subpropertyB" , "value" }
 
@@ -955,7 +976,7 @@ namespace acmevalidator.tests
                 {
                         {   "subpropertyA", new JObject {
                                 { "!", "not_value" }
-                            } 
+                            }
                         }
                 }
             };
@@ -984,7 +1005,7 @@ namespace acmevalidator.tests
                 {
                         {   "subpropertyA", new JObject {
                                 { "!", "not_value" }
-                            } 
+                            }
                         },
                         { "subpropertyB" , "value" }
                 }
@@ -1092,6 +1113,141 @@ namespace acmevalidator.tests
 
             var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
             Assert.IsFalse(equals);
+        }
+
+        [TestMethod]
+        public void NotNullWithNull()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = null
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    ["!"] = null
+                }
+            };
+
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+            Assert.IsFalse(equals);
+        }
+
+        [TestMethod]
+        public void NotNullWithNonNullString()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = "non null"
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    ["!"] = null
+                }
+            };
+
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
+        public void NotNullWithNonNullInteger()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = 10
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    ["!"] = null
+                }
+            };
+
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
+        public void NotNullObject()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    ["subproperty"] = "hello"
+                }
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = "$required"
+            };
+
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
+        public void NotNullObjectParent()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    ["subproperty"] = new JObject
+                    {
+                        ["subsubproperty"] = "hello"
+                    }
+                }
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    ["subproperty"] = "$required"
+                }
+            };
+
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
+        public void NotNullObjectNested()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    ["subproperty"] = new JObject
+                    {
+                        ["subsubproperty"] = "hello"
+                    }
+                }
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = "$required"
+            };
+
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+            Assert.IsTrue(equals);
         }
     }
 }
