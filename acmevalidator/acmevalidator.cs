@@ -63,8 +63,11 @@ namespace acmevalidator
             var tokens = input.DescendantsAndSelf().OfType<JProperty>().Where(x => x.Value.Type != JTokenType.Object);
             foreach (var token in tokens)
             {
+                // specific for check requiredkeywork at any depth, we look parent after parent until we find requiredkeywork
+                JToken tokenrule = GetNextParentRequired(_rules, token);
+
                 // prevents comparison of full first level Object (see tests nestedproperties)
-                var tokenrule = _rules.SelectToken(token.Path);
+                tokenrule = tokenrule ?? _rules.SelectToken(token.Path);
 
                 if (token.Value.Type != JTokenType.Object || (tokenrule != null && tokenrule.Type == JTokenType.Null))
                 {
@@ -95,6 +98,27 @@ namespace acmevalidator
                 errors.Add(new JObject { { leftover.Path, leftover } }, null);
 
             return !errors.Any();
+        }
+
+        // loop from token to root to find any requiredkeyword, return null otherwise
+        private JToken GetNextParentRequired(JObject rules, JToken token)
+        {
+            string path = token.Parent.Path;
+            do
+            {
+                var parenttoken = rules.SelectToken(path);
+
+                // if parent token is required, we return it
+                if (parenttoken != null && parenttoken.Type == JTokenType.String && parenttoken.Value<string>() == requiredkeywork)
+                    return parenttoken;
+
+                // we loop one level up
+                token = token.Parent.Parent;
+                path = token?.Path;
+
+            } while (!String.IsNullOrEmpty(path));
+
+            return null;
         }
 
         public static bool HasAllTheRequiredProperties(Dictionary<JToken, JToken> errors)
@@ -133,11 +157,11 @@ namespace acmevalidator
         private bool ValidateToken(JToken rule, JProperty input)
         {
             // get operator if existing
-            Modifier modifier= Modifier.NoModifier;
-            
+            Modifier modifier = Modifier.NoModifier;
+
             if (rule.Type == JTokenType.Object)
             {
-                foreach(var modifiertype in Enum.GetValues(typeof(Modifier)).OfType<Modifier>())
+                foreach (var modifiertype in Enum.GetValues(typeof(Modifier)).OfType<Modifier>())
                 {
                     var modifierkey = ((char)modifiertype).ToString();
 
@@ -172,7 +196,10 @@ namespace acmevalidator
             switch (input.Type)
             {
                 case JTokenType.String:
-                    match = rule.Value<string>().Equals(input.Value<string>(), modifier == Modifier.CaseInsensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+                    if (rule.Type == JTokenType.Null && input.Type != JTokenType.Null)
+                        match = false;
+                    else
+                        match = rule.Value<string>().Equals(input.Value<string>(), modifier == Modifier.CaseInsensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
                     // $required / $requiredOrnull
                     ApplyWildcardOperators(ref match, rule, input);
