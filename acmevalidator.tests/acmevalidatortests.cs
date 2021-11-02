@@ -1249,5 +1249,110 @@ namespace acmevalidator.tests
             var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
             Assert.IsTrue(equals);
         }
+
+        [TestMethod]
+        public void SuperiorDateTrue()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = "2021-10-30T10:00:00.000Z"
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    [">"] = "2021-10-29T10:00:00.000Z"
+                }
+            };
+
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
+        public void SuperiorDateFalse()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = "2021-10-28T10:00:00.000Z"
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    [">"] = "2021-10-29T10:00:00.000Z"
+                }
+            };
+
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+            Assert.IsFalse(equals);
+        }
+
+        [TestMethod]
+        public void InferiorDateFalse()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = "2021-10-30T10:00:00.000Z"
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    ["<"] = "2021-10-29T10:00:00.000Z"
+                }
+            };
+
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+            Assert.IsFalse(equals);
+        }
+
+        [TestMethod]
+        public void InferiorDateTrue()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = "2021-10-28T10:00:00.000Z"
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    ["<"] = "2021-10-29T10:00:00.000Z"
+                }
+            };
+
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+            Assert.IsTrue(equals);
+        }
+
+        [TestMethod]
+        public void FaultySuperiorDate()
+        {
+            var acmevalidator = new Validator();
+            var input = new JObject
+            {
+                ["property1"] = "not a date"
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = new JObject
+                {
+                    [">"] = "still not a date"
+                }
+            };
+
+            var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
+            Assert.IsFalse(equals);
+        }
     }
 }

@@ -12,7 +12,9 @@ namespace acmevalidator
             NoModifier = 0,
             Negation = '!',
             Like = '%',
-            CaseInsensitive = '~'
+            CaseInsensitive = '~',
+            Superior = '>',
+            Inferior = '<'
         }
 
         public JObject Rules { get; internal set; }
@@ -203,6 +205,25 @@ namespace acmevalidator
 
                     // $required / $requiredOrnull
                     ApplyWildcardOperators(ref match, rule, input);
+
+                    // DateTime comparision 
+                    if(modifier == Modifier.Superior || modifier == Modifier.Inferior)
+                    {
+                        try
+                        {
+                            var ruleobject = rule.Value<DateTime?>();
+                            var inputbject = input.Value<DateTime?>();
+
+                            if (modifier == Modifier.Superior)
+                                match = ruleobject < inputbject;
+
+                            if (modifier == Modifier.Inferior)
+                                match = ruleobject > inputbject;
+                        }catch
+                        {
+                            match = false;
+                        }
+                    }
 
                     if (modifier == Modifier.Like)
                         match = input.Value<string>().Contains(rule.Value<string>());
