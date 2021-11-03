@@ -1277,14 +1277,14 @@ namespace acmevalidator.tests
             var acmevalidator = new Validator();
             var input = new JObject
             {
-                ["property1"] = "2021-10-28T10:00:00.000Z"
+                ["property1"] = "2021-10-28T10:00:00Z"
             };
 
             var rules = new JObject
             {
                 ["property1"] = new JObject
                 {
-                    [">"] = "2021-10-29T10:00:00.000Z"
+                    [">"] = "2021-10-29T10:00:00Z"
                 }
             };
 
@@ -1298,14 +1298,14 @@ namespace acmevalidator.tests
             var acmevalidator = new Validator();
             var input = new JObject
             {
-                ["property1"] = "2021-10-30T10:00:00.000Z"
+                ["property1"] = "2021-10-30T10:00:00Z"
             };
 
             var rules = new JObject
             {
                 ["property1"] = new JObject
                 {
-                    ["<"] = "2021-10-29T10:00:00.000Z"
+                    ["<"] = "2021-10-29T10:00:00Z"
                 }
             };
 
@@ -1319,14 +1319,14 @@ namespace acmevalidator.tests
             var acmevalidator = new Validator();
             var input = new JObject
             {
-                ["property1"] = "2021-10-28T10:00:00.000Z"
+                ["property1"] = "2021-10-28T10:00:00Z"
             };
 
             var rules = new JObject
             {
                 ["property1"] = new JObject
                 {
-                    ["<"] = "2021-10-29T10:00:00.000Z"
+                    ["<"] = "2021-10-29T10:00:00Z"
                 }
             };
 

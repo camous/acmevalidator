@@ -197,6 +197,7 @@ namespace acmevalidator
 
             switch (input.Type)
             {
+                case JTokenType.Date:
                 case JTokenType.String:
                     if (rule.Type == JTokenType.Null && input.Type != JTokenType.Null)
                         match = false;
@@ -206,8 +207,8 @@ namespace acmevalidator
                     // $required / $requiredOrnull
                     ApplyWildcardOperators(ref match, rule, input);
 
-                    // DateTime comparision 
-                    if(modifier == Modifier.Superior || modifier == Modifier.Inferior)
+                    // Date comparison, we merge within usecase for string because Date format could be differently spotted by newtonsoft
+                    if (modifier == Modifier.Inferior || modifier == Modifier.Superior)
                     {
                         try
                         {
@@ -219,7 +220,8 @@ namespace acmevalidator
 
                             if (modifier == Modifier.Inferior)
                                 match = ruleobject > inputbject;
-                        }catch
+                        }
+                        catch
                         {
                             match = false;
                         }
