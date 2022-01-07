@@ -6,7 +6,7 @@
     <Authors>Fabien Camous</Authors>
     <Description>Validate json object against json rules</Description>
     <Company>Bearingpoint</Company>
-    <Version>2.7.3</Version>
+    <Version>2.7.4</Version>
     <PackageProjectUrl>https://github.com/camous/acmevalidator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/camous/acmevalidator</RepositoryUrl>
   </PropertyGroup>

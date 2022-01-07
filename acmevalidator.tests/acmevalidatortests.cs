@@ -1354,5 +1354,29 @@ namespace acmevalidator.tests
             var equals = acmevalidator.Validate(input, rules, out Dictionary<JToken, JToken> errors);
             Assert.IsFalse(equals);
         }
+
+        [TestMethod]
+        public void InputFromJArray()
+        {
+            // if input JObject if coming from a JArray, token.Path will still store array index eg [1].property1 breaking the validation logic
+
+            var acmevalidator = new Validator();
+            var inputs = new JArray
+            {
+                new JObject {["property1"] = "hello"},
+                new JObject {["property1"] = "hello"}
+            };
+
+            var rules = new JObject
+            {
+                ["property1"] = "hello"
+            };
+
+            foreach(var input in inputs)
+            {
+                var equals = acmevalidator.Validate(input as JObject, rules, out Dictionary<JToken, JToken> errors);
+                Assert.IsTrue(equals);
+            }
+        }
     }
 }

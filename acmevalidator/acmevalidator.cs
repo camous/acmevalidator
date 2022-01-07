@@ -62,6 +62,10 @@ namespace acmevalidator
 
             errors = new Dictionary<JToken, JToken>();
 
+            // if input JObject if coming from a JArray, token.Path will still store array index eg [1].property1 breaking the validation logic
+            // below we ensure Path are clean within context
+            input = JObject.FromObject(input); 
+
             var tokens = input.DescendantsAndSelf().OfType<JProperty>().Where(x => x.Value.Type != JTokenType.Object);
             foreach (var token in tokens)
             {
